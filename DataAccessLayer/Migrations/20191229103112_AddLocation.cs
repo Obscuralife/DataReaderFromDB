@@ -2,6 +2,9 @@
 
 namespace DataAccessLayer.Migrations
 {
+    /// <summary>
+    /// Add location description migration.
+    /// </summary>
     public partial class AddLocation : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -13,7 +16,7 @@ namespace DataAccessLayer.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(maxLength: 60, nullable: false),
-                    Email_address = table.Column<string>(maxLength: 60, nullable: false)
+                    Email_address = table.Column<string>(maxLength: 60, nullable: false),
                 },
                 constraints: table =>
                 {

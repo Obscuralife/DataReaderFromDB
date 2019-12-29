@@ -10,12 +10,15 @@ namespace DataAccessLayer
     /// </summary>
     public class ApplicationDbContext : DbContext
     {
-        public virtual DbSet<Location> Locations { get; set; }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ApplicationDbContext"/> class.
+        /// </summary>
         public ApplicationDbContext()
         {
-            Database.EnsureCreated();
+            this.Database.EnsureCreated();
         }
+
+        public virtual DbSet<Location> Locations { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
