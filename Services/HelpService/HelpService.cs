@@ -1,6 +1,7 @@
 ﻿using System;
+using Services.ConsoleColorService;
 
-namespace Services
+namespace Services.HelpService
 {
     /// <summary>
     /// Represents an application help service.
@@ -16,6 +17,7 @@ namespace Services
         /// </summary>
         public HelpService()
         {
+            _consoleColor = new CustomConsoleColor();
             this.HelpMessages = new string[][]
             {
                 new string[] { "help", "print the help screen", "The 'help' command prints the help screen." },
@@ -28,6 +30,8 @@ namespace Services
         /// Gets help messages list.
         /// </summary>
         public string[][] HelpMessages { get; }
+
+        private CustomConsoleColor _consoleColor;
 
         /// <summary>
         /// Prints help message for command.
@@ -45,7 +49,7 @@ namespace Services
             }
             else
             {
-                Console.WriteLine($"There is no explanation for '{command}' command.");
+                _consoleColor.WriteLineRedColor($"There is no explanation for '{command}' command.");
             }
         }
 
@@ -54,10 +58,11 @@ namespace Services
         /// </summary>
         public void PrintHelp()
         {
-            Console.WriteLine("Available commands:");
+            _consoleColor.WriteLineGreenColor("Available commands:");
             foreach (var helpMessage in this.HelpMessages)
             {
-                Console.WriteLine("\t{0}\t- {1}", helpMessage[CommandHelpIndex], helpMessage[DescriptionHelpIndex]);
+                _consoleColor.WriteYellowColor($"\t {helpMessage[CommandHelpIndex]}");
+                Console.WriteLine(" - \t{0}", helpMessage[DescriptionHelpIndex]);
             }
         }
     }
