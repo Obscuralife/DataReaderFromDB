@@ -11,6 +11,7 @@ namespace DataAccessLayer
     public class ApplicationDbContext : DbContext
     {
         public virtual DbSet<Location> Locations { get; set; }
+
         public ApplicationDbContext()
         {
             Database.EnsureCreated();
