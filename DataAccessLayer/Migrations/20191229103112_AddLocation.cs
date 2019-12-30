@@ -7,6 +7,7 @@ namespace DataAccessLayer.Migrations
     /// </summary>
     public partial class AddLocation : Migration
     {
+        /// <inheritdoc/>
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -25,6 +26,7 @@ namespace DataAccessLayer.Migrations
                 });
         }
 
+        /// <inheritdoc/>
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

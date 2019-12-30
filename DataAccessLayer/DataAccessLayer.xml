@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DataAccessLayer</name>
+    </assembly>
+    <members>
+        <member name="T:DataAccessLayer.ApplicationDbContext">
+            <summary>
+            Represents an application database context.
+            </summary>
+        </member>
+        <member name="M:DataAccessLayer.ApplicationDbContext.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:DataAccessLayer.ApplicationDbContext"/> class.
+            </summary>
+        </member>
+        <member name="P:DataAccessLayer.ApplicationDbContext.Locations">
+            <summary>
+            Gets or sets location entities.
+            </summary>
+            <value><see cref="T:DataAccessLayer.Models.Location"/>.</value>
+        </member>
+        <member name="M:DataAccessLayer.ApplicationDbContext.OnConfiguring(Microsoft.EntityFrameworkCore.DbContextOptionsBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataAccessLayer.ApplicationDbContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="T:DataAccessLayer.Migrations.AddLocation">
+            <summary>
+            Add location description migration.
+            </summary>
+        </member>
+        <member name="M:DataAccessLayer.Migrations.AddLocation.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="M:DataAccessLayer.Migrations.AddLocation.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="T:DataAccessLayer.Models.ILocation">
+            <summary>
+            Represents location entity.
+            </summary>
+        </member>
+        <member name="P:DataAccessLayer.Models.ILocation.Address">
+            <summary>
+            Gets or sets location address.
+            </summary>
+        </member>
+        <member name="P:DataAccessLayer.Models.ILocation.Id">
+            <summary>
+            Gets or sets lication ID. Can be null.
+            </summary>
+        </member>
+        <member name="P:DataAccessLayer.Models.ILocation.Name">
+            <summary>
+            Gets or sets location name.
+            </summary>
+        </member>
+        <member name="T:DataAccessLayer.Models.Location">
+            <inheritdoc/>
+        </member>
+        <member name="P:DataAccessLayer.Models.Location.Id">
+            <inheritdoc/>
+        </member>
+        <member name="P:DataAccessLayer.Models.Location.Name">
+            <inheritdoc/>
+        </member>
+        <member name="P:DataAccessLayer.Models.Location.Address">
+            <inheritdoc/>
+        </member>
+        <member name="T:DataAccessLayer.Models.LocationConfiguration">
+            <summary>
+            Represents custom configuration for location table.
+            </summary>
+        </member>
+        <member name="M:DataAccessLayer.Models.LocationConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{DataAccessLayer.Models.Location})">
+            <summary>
+            Configure method for location tables.
+            </summary>
+            <param name="builder">Provides a simple API for configuring an Microsoft.EntityFrameworkCore.</param>
+        </member>
+    </members>
+</doc>
