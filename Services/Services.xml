@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Services</name>
+    </assembly>
+    <members>
+        <member name="T:Services.ConsoleColorService.CustomConsoleColor">
+            <summary>
+            Represents custom color IO.
+            </summary>
+        </member>
+        <member name="M:Services.ConsoleColorService.CustomConsoleColor.Symbol">
+            <summary>
+            Prints special symbol.
+            </summary>
+        </member>
+        <member name="M:Services.ConsoleColorService.CustomConsoleColor.WriteLineGreenColor(System.String)">
+            <summary>
+            Write line green color message.
+            </summary>
+            <param name="message">.</param>
+        </member>
+        <member name="M:Services.ConsoleColorService.CustomConsoleColor.WriteLineRedColor(System.String)">
+            <summary>
+            Write line red color message.
+            </summary>
+            <param name="message">.</param>
+        </member>
+        <member name="M:Services.ConsoleColorService.CustomConsoleColor.WriteYellowColor(System.String)">
+            <summary>
+            Write yellow color message.
+            </summary>
+            <param name="message">.</param>
+        </member>
+        <member name="T:Services.HelpService.HelpService">
+            <summary>
+            Represents an application help service.
+            </summary>
+        </member>
+        <member name="M:Services.HelpService.HelpService.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Services.HelpService.HelpService"/> class.
+            </summary>
+        </member>
+        <member name="P:Services.HelpService.HelpService.HelpMessages">
+            <summary>
+            Gets help messages list.
+            </summary>
+        </member>
+        <member name="M:Services.HelpService.HelpService.PrintHelp(System.String)">
+            <summary>
+            Prints help message for command.
+            </summary>
+            <param name="command">command that needs explanation.</param>
+        </member>
+        <member name="M:Services.HelpService.HelpService.PrintHelp">
+            <summary>
+            Prints help messages.
+            </summary>
+        </member>
+    </members>
+</doc>

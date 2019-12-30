@@ -15,11 +15,16 @@ namespace DataAccessLayer
         /// </summary>
         public ApplicationDbContext()
         {
-            this.Database.EnsureCreated();
+            Database.EnsureCreated();
         }
 
+        /// <summary>
+        /// Gets or sets location entities.
+        /// </summary>
+        /// <value><see cref="Location"/>.</value>
         public virtual DbSet<Location> Locations { get; set; }
 
+        /// <inheritdoc/>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var builder = new ConfigurationBuilder();
@@ -30,6 +35,7 @@ namespace DataAccessLayer
             optionsBuilder.UseSqlServer(configure.GetConnectionString("DefaultConnection"));
         }
 
+        /// <inheritdoc/>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new LocationConfiguration());

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EntryPoint</name>
+    </assembly>
+    <members>
+        <member name="T:EntryPoint.Program">
+            <summary>
+            Represents entry program point.
+            </summary>
+        </member>
+    </members>
+</doc>
