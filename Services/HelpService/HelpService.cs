@@ -11,14 +11,15 @@ namespace Services.HelpService
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
+        private CustomConsoleColor consoleColor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HelpService"/> class.
         /// </summary>
         public HelpService()
         {
-            _consoleColor = new CustomConsoleColor();
-            this.HelpMessages = new string[][]
+            consoleColor = new CustomConsoleColor();
+            HelpMessages = new string[][]
             {
                 new string[] { "help", "print the help screen", "The 'help' command prints the help screen." },
                 new string[] { "list", "shows records", "The 'list' command shows the records." },
@@ -31,8 +32,6 @@ namespace Services.HelpService
         /// </summary>
         public string[][] HelpMessages { get; }
 
-        private CustomConsoleColor _consoleColor;
-
         /// <summary>
         /// Prints help message for command.
         /// </summary>
@@ -40,16 +39,16 @@ namespace Services.HelpService
         public void PrintHelp(string command)
         {
             var index = Array.FindIndex(
-                this.HelpMessages,
+                HelpMessages,
                 i => string.Equals(i[CommandHelpIndex], command, StringComparison.InvariantCultureIgnoreCase));
 
             if (index >= 0)
             {
-                Console.WriteLine(this.HelpMessages[index][ExplanationHelpIndex]);
+                Console.WriteLine(HelpMessages[index][ExplanationHelpIndex]);
             }
             else
             {
-                _consoleColor.WriteLineRedColor($"There is no explanation for '{command}' command.");
+                consoleColor.WriteLineRedColor($"There is no explanation for '{command}' command.");
             }
         }
 
@@ -58,10 +57,10 @@ namespace Services.HelpService
         /// </summary>
         public void PrintHelp()
         {
-            _consoleColor.WriteLineGreenColor("Available commands:");
-            foreach (var helpMessage in this.HelpMessages)
+            consoleColor.WriteLineGreenColor("Available commands:");
+            foreach (var helpMessage in HelpMessages)
             {
-                _consoleColor.WriteYellowColor($"\t {helpMessage[CommandHelpIndex]}");
+                consoleColor.WriteYellowColor($"\t {helpMessage[CommandHelpIndex]}");
                 Console.WriteLine(" - \t{0}", helpMessage[DescriptionHelpIndex]);
             }
         }
