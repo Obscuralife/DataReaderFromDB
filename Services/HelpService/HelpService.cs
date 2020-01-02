@@ -1,66 +1,61 @@
 ﻿using System;
-using Services.ConsoleColorService;
+using CustomConsole = Services.ConsoleService.ConsoleExtension;
 
-namespace Services.HelpService
+namespace Services
 {
-    /// <summary>
-    /// Represents an application help service.
-    /// </summary>
-    public class HelpService
+    /// <inheritdoc/>
+    public class HelpService : IHelpService
     {
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
-        private CustomConsoleColor consoleColor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HelpService"/> class.
         /// </summary>
         public HelpService()
         {
-            consoleColor = new CustomConsoleColor();
             HelpMessages = new string[][]
             {
-                new string[] { "help", "print the help screen", "The 'help' command prints the help screen." },
-                new string[] { "list", "shows records", "The 'list' command shows the records." },
+                new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
                 new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
+                new string[]
+                {
+                    "get ", "gets locations", "The 'get' returns all locations.\n" +
+                                                         "The 'get -id #' returns location by id\n" +
+                                                         "The 'get -address #' returns location by address\n" +
+                                                         "The 'get -city # returns locations by city",
+                },
             };
         }
 
-        /// <summary>
-        /// Gets help messages list.
-        /// </summary>
+        /// <inheritdoc/>
         public string[][] HelpMessages { get; }
 
-        /// <summary>
-        /// Prints help message for command.
-        /// </summary>
-        /// <param name="command">command that needs explanation.</param>
+        /// <inheritdoc/>
         public void PrintHelp(string command)
         {
-            var index = Array.FindIndex(
+            var commandIndex = Array.FindIndex(
                 HelpMessages,
-                i => string.Equals(i[CommandHelpIndex], command, StringComparison.InvariantCultureIgnoreCase));
+                i => string.Equals(i[CommandHelpIndex].Trim(' '), command, StringComparison.InvariantCultureIgnoreCase));
 
-            if (index >= 0)
+            if (commandIndex >= 0)
             {
-                Console.WriteLine(HelpMessages[index][ExplanationHelpIndex]);
+                Console.WriteLine(HelpMessages[commandIndex][ExplanationHelpIndex]);
             }
             else
             {
-                consoleColor.WriteLineRedColor($"There is no explanation for '{command}' command.");
+                CustomConsole.WriteLineRedColor($"There is no explanation for '{command}' command.");
             }
         }
 
-        /// <summary>
-        /// Prints help messages.
-        /// </summary>
+        /// <inheritdoc/>
         public void PrintHelp()
         {
-            consoleColor.WriteLineGreenColor("Available commands:");
+            CustomConsole.WriteLineGreenColor("Available commands:");
             foreach (var helpMessage in HelpMessages)
             {
-                consoleColor.WriteYellowColor($"\t {helpMessage[CommandHelpIndex]}");
+                CustomConsole.WriteYellowColor($"\t {helpMessage[CommandHelpIndex]}");
                 Console.WriteLine(" - \t{0}", helpMessage[DescriptionHelpIndex]);
             }
         }

@@ -4,59 +4,92 @@
         <name>Services</name>
     </assembly>
     <members>
-        <member name="T:Services.ConsoleColorService.CustomConsoleColor">
+        <member name="T:Services.CommandService">
+            <inheritdoc/>
+        </member>
+        <member name="M:Services.CommandService.#ctor(DataAccessLayer.ApplicationDbContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Services.CommandService"/> class.
+            </summary>
+            <param name="context">data context.</param>
+        </member>
+        <member name="P:Services.CommandService.IsRunning">
+            <inheritdoc/>
+        </member>
+        <member name="M:Services.CommandService.Initialize(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Services.ConsoleService.ConsoleExtension">
             <summary>
             Represents custom color IO.
             </summary>
         </member>
-        <member name="M:Services.ConsoleColorService.CustomConsoleColor.Symbol">
+        <member name="M:Services.ConsoleService.ConsoleExtension.Symbol">
             <summary>
             Prints special symbol.
             </summary>
         </member>
-        <member name="M:Services.ConsoleColorService.CustomConsoleColor.WriteLineGreenColor(System.String)">
+        <member name="M:Services.ConsoleService.ConsoleExtension.WriteLineGreenColor(System.String)">
             <summary>
             Write line green color message.
             </summary>
             <param name="message">.</param>
         </member>
-        <member name="M:Services.ConsoleColorService.CustomConsoleColor.WriteLineRedColor(System.String)">
+        <member name="M:Services.ConsoleService.ConsoleExtension.WriteLineRedColor(System.String)">
             <summary>
             Write line red color message.
             </summary>
             <param name="message">.</param>
         </member>
-        <member name="M:Services.ConsoleColorService.CustomConsoleColor.WriteYellowColor(System.String)">
+        <member name="M:Services.ConsoleService.ConsoleExtension.WriteYellowColor(System.String)">
             <summary>
             Write yellow color message.
             </summary>
             <param name="message">.</param>
         </member>
-        <member name="T:Services.HelpService.HelpService">
+        <member name="M:Services.ConsoleService.ConsoleExtension.WriteGreenColor(System.String)">
+            <summary>
+            Write green color message.
+            </summary>
+            <param name="message">.</param>
+        </member>
+        <member name="T:Services.HelpService">
+            <inheritdoc/>
+        </member>
+        <member name="M:Services.HelpService.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Services.HelpService"/> class.
+            </summary>
+        </member>
+        <member name="P:Services.HelpService.HelpMessages">
+            <inheritdoc/>
+        </member>
+        <member name="M:Services.HelpService.PrintHelp(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Services.HelpService.PrintHelp">
+            <inheritdoc/>
+        </member>
+        <member name="T:Services.IHelpService">
             <summary>
             Represents an application help service.
             </summary>
         </member>
-        <member name="M:Services.HelpService.HelpService.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Services.HelpService.HelpService"/> class.
-            </summary>
-        </member>
-        <member name="P:Services.HelpService.HelpService.HelpMessages">
+        <member name="P:Services.IHelpService.HelpMessages">
             <summary>
             Gets help messages list.
             </summary>
         </member>
-        <member name="M:Services.HelpService.HelpService.PrintHelp(System.String)">
+        <member name="M:Services.IHelpService.PrintHelp">
+            <summary>
+            Prints help messages.
+            </summary>
+        </member>
+        <member name="M:Services.IHelpService.PrintHelp(System.String)">
             <summary>
             Prints help message for command.
             </summary>
             <param name="command">command that needs explanation.</param>
-        </member>
-        <member name="M:Services.HelpService.HelpService.PrintHelp">
-            <summary>
-            Prints help messages.
-            </summary>
         </member>
     </members>
 </doc>
