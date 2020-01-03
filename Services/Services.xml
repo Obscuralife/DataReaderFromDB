@@ -19,6 +19,22 @@
         <member name="M:Services.CommandService.Initialize(System.String)">
             <inheritdoc/>
         </member>
+        <member name="T:Services.ICommandService">
+            <summary>
+            Represents a service for works with commands.
+            </summary>
+        </member>
+        <member name="P:Services.ICommandService.IsRunning">
+            <summary>
+            Gets a value indicating whether application is running.
+            </summary>
+        </member>
+        <member name="M:Services.ICommandService.Initialize(System.String)">
+            <summary>
+            Processes input.
+            </summary>
+            <param name="commandLine">.</param>
+        </member>
         <member name="T:Services.ConsoleService.ConsoleExtension">
             <summary>
             Represents custom color IO.

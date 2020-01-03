@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using DataAccessLayer;
 using DataAccessLayer.Models;
-using Microsoft.EntityFrameworkCore;
 using CustomConsole = Services.ConsoleService.ConsoleExtension;
 
 namespace Services
 {
     /// <inheritdoc/>
-    public class CommandService
+    public sealed class CommandService : ICommandService
     {
         private const int CommandIndex = 0;
         private readonly IHelpService helpService;
         private readonly Tuple<string, Action<string[]>>[] commands;
+        private readonly Tuple<string, Action<string>>[] getCommands;
         private readonly ApplicationDbContext context;
 
         /// <summary>
@@ -24,12 +23,20 @@ namespace Services
         {
             this.context = context ?? throw new ArgumentNullException(nameof(context));
             helpService = new HelpService();
+
             commands = new Tuple<string, Action<string[]>>[]
             {
                 new Tuple<string, Action<string[]>>("help", PrintHelp),
                 new Tuple<string, Action<string[]>>("exit", Exit),
                 new Tuple<string, Action<string[]>>("get", Get),
             };
+
+            getCommands = new Tuple<string, Action<string>>[]
+                {
+                    new Tuple<string, Action<string>>("-id", GetById),
+                    new Tuple<string, Action<string>>("-address", GetByAddress),
+                    new Tuple<string, Action<string>>("-city", GetByCity),
+                };
         }
 
         /// <inheritdoc/>
@@ -61,7 +68,7 @@ namespace Services
 
         private void Get(string[] parameteres)
         {
-            if (parameteres == null)
+            if (parameteres == null || string.IsNullOrWhiteSpace(parameteres[0]))
             {
                 GetAll();
             }
@@ -69,13 +76,6 @@ namespace Services
             {
                 const int GetParameter = 0;
                 const int GetParameterValue = 1;
-                var getCommands = new Tuple<string, Action<string>>[]
-                {
-                    new Tuple<string, Action<string>>("-id", GetById),
-                    new Tuple<string, Action<string>>("-address", GetByAddress),
-                    new Tuple<string, Action<string>>("-city", GetByCity),
-                };
-
                 var index = Array.FindIndex(
                     getCommands,
                     i => string.Equals(i.Item1, parameteres[GetParameter], StringComparison.InvariantCultureIgnoreCase));
@@ -87,6 +87,7 @@ namespace Services
                 }
                 else
                 {
+                    CustomConsole.WriteLineRedColor($"There is no available '{parameteres[GetParameter]}' command");
                     helpService.PrintHelp("get");
                 }
             }
@@ -94,30 +95,58 @@ namespace Services
 
         private void GetByCity(string city)
         {
-            var locations = context.Locations.Where(i => i.Name.Contains(city)).ToArray();
-            if (locations.Length == 0)
+            if (string.IsNullOrWhiteSpace(city))
             {
-                CustomConsole.WriteLineRedColor($"There is no location with '{city}' city");
+                GetOrderedCities();
             }
             else
             {
-                foreach (var location in locations)
+                var locations = context.Locations
+                                .AsEnumerable()
+                                .Where(i => FindCityExpression(i.Name, city))
+                                .ToArray();
+
+                if (locations.Length == 0)
                 {
-                    Print(location);
+                    CustomConsole.WriteLineRedColor($"There is no location with '{city}' city");
+                }
+                else
+                {
+                    foreach (var location in locations)
+                    {
+                        CustomConsole.Print(location);
+                    }
                 }
             }
         }
 
+        private bool FindCityExpression(string name, string city)
+        {
+            const int CityIndex = 1;
+            var nameParametres = name.Split(new char[] { ' ' });
+
+            return nameParametres.Length > 1 ?
+                string.Equals(nameParametres[CityIndex], city, StringComparison.InvariantCultureIgnoreCase)
+                : false;
+        }
+
         private void GetByAddress(string locationAddress)
         {
-            var locations = context.Locations.Where(i => i.Address == locationAddress).ToArray();
-            if (locations.Length == 0)
+            if (string.IsNullOrWhiteSpace(locationAddress))
             {
-                CustomConsole.WriteLineRedColor($"There is no location with '{locationAddress}' address");
+                GetOrderedAddresses();
             }
             else
             {
-                Print(locations[0]);
+                var locations = context.Locations.Where(i => i.Address == locationAddress).ToArray();
+                if (locations.Length == 0)
+                {
+                    CustomConsole.WriteLineRedColor($"There is no location with '{locationAddress}' address");
+                }
+                else
+                {
+                    CustomConsole.Print(locations[0]);
+                }
             }
         }
 
@@ -136,11 +165,11 @@ namespace Services
             }
             else
             {
-                Print(locations[0]);
+                CustomConsole.Print(locations[0]);
             }
         }
 
-        private void GetAll(string[] obj = null)
+        private void GetAll(string[] args = null)
         {
             var locations = context.Locations.OrderBy(i => i.Id).ToArray();
             if (locations.Length == 0)
@@ -151,16 +180,34 @@ namespace Services
             {
                 foreach (var location in locations)
                 {
-                    Print(location);
+                    CustomConsole.Print(location);
                 }
             }
         }
 
-        private void Exit(string[] obj = null)
+        private void Exit(string[] args = null)
         {
             context.Dispose();
             IsRunning = false;
             CustomConsole.WriteLineGreenColor("Good bye");
+        }
+
+        private void GetOrderedCities()
+        {
+            var locations = context.Locations.OrderBy(i => i.Name).ToArray();
+            foreach (var location in locations)
+            {
+                CustomConsole.Print(location);
+            }
+        }
+
+        private void GetOrderedAddresses()
+        {
+            var locations = context.Locations.OrderBy(i => i.Address).ToArray();
+            foreach (var location in locations)
+            {
+                CustomConsole.Print(location);
+            }
         }
 
         private void PrintHelp(string[] command = null)
@@ -173,16 +220,6 @@ namespace Services
             {
                 helpService.PrintHelp(command[0]);
             }
-        }
-
-        private void Print(Location location)
-        {
-            CustomConsole.WriteYellowColor("ID:     \t");
-            CustomConsole.WriteLineGreenColor($"{location.Id}");
-            CustomConsole.WriteYellowColor("Name:   \t");
-            CustomConsole.WriteLineGreenColor($"{location.Name}");
-            CustomConsole.WriteYellowColor("Address:\t");
-            CustomConsole.WriteLineGreenColor($"{location.Address}");
         }
     }
 }
