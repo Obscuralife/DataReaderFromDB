@@ -1,4 +1,5 @@
 ﻿using System;
+using DataAccessLayer.Models;
 
 namespace Services.ConsoleService
 {
@@ -59,6 +60,20 @@ namespace Services.ConsoleService
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write(message);
             Console.ResetColor();
+        }
+
+        /// <summary>
+        /// Prints each property of <see cref="Location"/>.
+        /// </summary>
+        /// <param name="location">.</param>
+        public static void Print(Location location)
+        {
+            WriteYellowColor("ID:     \t");
+            WriteLineGreenColor($"{location.Id}");
+            WriteYellowColor("Name:   \t");
+            WriteLineGreenColor($"{location.Name}");
+            WriteYellowColor("Address:\t");
+            WriteLineGreenColor($"{location.Address}");
         }
     }
 }

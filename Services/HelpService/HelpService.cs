@@ -4,7 +4,7 @@ using CustomConsole = Services.ConsoleService.ConsoleExtension;
 namespace Services
 {
     /// <inheritdoc/>
-    public class HelpService : IHelpService
+    public sealed class HelpService : IHelpService
     {
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
@@ -17,14 +17,17 @@ namespace Services
         {
             HelpMessages = new string[][]
             {
-                new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
-                new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
+                new string[] { "help", "prints the help screen.", "The 'help' command prints the help screen." },
+                new string[] { "help {command name}", "prints the help screen for command.", "The 'help {command name}' command prints the help screen for command." },
+                new string[] { "exit", "exits the application.", "The 'exit' command exits the application." },
                 new string[]
                 {
-                    "get ", "gets locations", "The 'get' returns all locations.\n" +
-                                                         "The 'get -id #' returns location by id\n" +
-                                                         "The 'get -address #' returns location by address\n" +
-                                                         "The 'get -city # returns locations by city",
+                    "get ", "gets locations.", "The 'get' returns all locations.\n" +
+                                              "The 'get -id {ID}' returns location by id\n" +
+                                              "The 'get -address {address name}' returns location by address\n" +
+                                              "The 'get -address' returns location ordered by address\n" +
+                                              "The 'get -city {city name}' returns locations by city\n" +
+                                              "The 'get -city' returns locations ordered by city",
                 },
             };
         }
