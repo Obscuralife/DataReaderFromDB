@@ -69,6 +69,12 @@
             </summary>
             <param name="message">.</param>
         </member>
+        <member name="M:Services.ConsoleService.ConsoleExtension.Print(DataAccessLayer.Models.Location)">
+            <summary>
+            Prints each property of <see cref="T:DataAccessLayer.Models.Location"/>.
+            </summary>
+            <param name="location">.</param>
+        </member>
         <member name="T:Services.HelpService">
             <inheritdoc/>
         </member>
