@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>HostedService</name>
+    </assembly>
+    <members>
+        <member name="T:HostedService.AppSettings">
+            <summary>
+            Represents application settings.
+            </summary>
+        </member>
+        <member name="P:HostedService.AppSettings.LocationsFileName">
+            <summary>
+            Gets or sets json data base file name.
+            </summary>
+        </member>
+        <member name="P:HostedService.AppSettings.PathToLocationsFile">
+            <summary>
+            Gets path to json data base.
+            </summary>
+        </member>
+        <member name="T:HostedService.Program">
+            <summary>
+            Represents a main host service class.
+            </summary>
+        </member>
+        <member name="M:HostedService.Program.Main(System.String[])">
+            <summary>
+            /// Represents a main entry point to host service.
+            </summary>
+            <param name="args">.</param>
+        </member>
+        <member name="M:HostedService.Program.CreateHostBuilder(System.String[])">
+            <summary>
+            Creates host builder.
+            </summary>
+            <param name="args">.</param>
+            <returns><see cref="T:Microsoft.Extensions.Hosting.IHostBuilder"/>.</returns>
+        </member>
+        <member name="T:HostedService.Worker">
+            <inheritdoc/>
+        </member>
+        <member name="M:HostedService.Worker.#ctor(Microsoft.Extensions.Logging.ILogger{HostedService.Worker},Microsoft.Extensions.Options.IOptions{HostedService.AppSettings})">
+            <summary>
+            Initializes a new instance of the <see cref="T:HostedService.Worker"/> class.
+            </summary>
+            <param name="logger">.</param>
+            <param name="settings">..</param>
+        </member>
+        <member name="M:HostedService.Worker.Dispose">
+            <inheritdoc/>
+        </member>
+        <member name="M:HostedService.Worker.StartAsync(System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HostedService.Worker.StopAsync(System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HostedService.Worker.ExecuteAsync(System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+    </members>
+</doc>
