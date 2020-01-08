@@ -1,3 +1,8 @@
+    Start program:
+    -set startUp projects : EntryPoint, HostedService.
+    - add-migration and update dataBase.
+    
+    
     1	OVERVIEW
 Required: Create application (service) which will be able to read data from stub data source, parse the data and push it to database. The service should be implemented as a job which pull data from stub data source time to time. Database schema should be designed by developer according to requirements below.
 Optional: Create console application to read data from database using command line interface (design of query language is up to developer)
