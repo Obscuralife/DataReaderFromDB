@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using System.Threading.Tasks;
 using DataAccessLayer;
 using Services;
 using CustomConsole = Services.ConsoleService.ConsoleExtension;
@@ -13,7 +13,7 @@ namespace EntryPoint
     {
         private static ICommandService commandHandler;
 
-        private static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
             CustomConsole.WriteLineGreenColor("Connecting to data base..");
             commandHandler = new CommandService(new ApplicationDbContext());
@@ -22,35 +22,35 @@ namespace EntryPoint
             Console.WriteLine("Enter the 'help' to get a help");
             if (args.Length > 0)
             {
-                InvokeFromCommandWindow(args);
+                 await InvokeFromCommandWindowAsync(args);
             }
             else
             {
-                InvokeFromApplication();
+                await InvokeFromApplicationAsync();
             }
         }
 
-        private static void InvokeFromApplication()
+        private static async Task InvokeFromApplicationAsync()
         {
             do
             {
                 Console.WriteLine();
                 CustomConsole.Symbol();
-                commandHandler.Initialize(commandLine: Console.ReadLine());
+                await commandHandler.InitializeAsync(commandLine: Console.ReadLine());
             }
             while (commandHandler.IsRunning);
         }
 
-        private static void InvokeFromCommandWindow(string[] args)
+        private static async Task InvokeFromCommandWindowAsync(string[] args)
         {
             Console.WriteLine();
             CustomConsole.Symbol();
             var commandLine = string.Join(' ', args);
-            commandHandler.Initialize(commandLine);
+            await commandHandler.InitializeAsync(commandLine);
 
             if (commandHandler.IsRunning)
             {
-                InvokeFromApplication();
+                await InvokeFromApplicationAsync();
             }
         }
     }

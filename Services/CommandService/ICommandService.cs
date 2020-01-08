@@ -1,4 +1,6 @@
-﻿namespace Services
+﻿using System.Threading.Tasks;
+
+namespace Services
 {
     /// <summary>
     /// Represents a service for works with commands.
@@ -13,7 +15,8 @@
         /// <summary>
         /// Processes input.
         /// </summary>
-        /// <param name="commandLine">.</param>
-        void Initialize(string commandLine);
+        /// <param name="commandLine">execution command line.</param>
+        /// <returns>.</returns>
+        Task InitializeAsync(string commandLine);
     }
 }

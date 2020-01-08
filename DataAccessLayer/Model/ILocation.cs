@@ -6,7 +6,7 @@
     public interface ILocation
     {
         /// <summary>
-        /// Gets or sets location address.
+        /// Gets or sets location email address.
         /// </summary>
         string Address { get; set; }
 
@@ -16,7 +16,7 @@
         int? Id { get; set; }
 
         /// <summary>
-        /// Gets or sets location name.
+        /// Gets or sets location room name.
         /// </summary>
         string Name { get; set; }
     }

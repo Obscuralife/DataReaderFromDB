@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.Web;
+using Services.HostService;
 
 namespace HostedService
 {
@@ -13,7 +14,7 @@ namespace HostedService
     public class Program
     {
         /// <summary>
-        /// /// Represents a main entry point to host service.
+        /// Represents a main entry point to host service.
         /// </summary>
         /// <param name="args">.</param>
         public static void Main(string[] args)
@@ -29,7 +30,7 @@ namespace HostedService
             }
             catch (Exception ex)
             {
-                logger.Fatal(ex, "Application terminated unexpectedly");
+                logger.Fatal(ex.Message, "Application terminated unexpectedly");
             }
             finally
             {
@@ -49,6 +50,7 @@ namespace HostedService
                 {
                     services.AddHostedService<Worker>();
                     services.Configure<AppSettings>(hostContext.Configuration.GetSection("AppSettings"));
+                    services.AddScoped<IDataService, DataService>();
                 })
             .ConfigureLogging(logging =>
             {

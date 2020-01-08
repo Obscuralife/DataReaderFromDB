@@ -44,7 +44,7 @@
         </member>
         <member name="P:DataAccessLayer.Models.ILocation.Address">
             <summary>
-            Gets or sets location address.
+            Gets or sets location email address.
             </summary>
         </member>
         <member name="P:DataAccessLayer.Models.ILocation.Id">
@@ -54,7 +54,7 @@
         </member>
         <member name="P:DataAccessLayer.Models.ILocation.Name">
             <summary>
-            Gets or sets location name.
+            Gets or sets location room name.
             </summary>
         </member>
         <member name="T:DataAccessLayer.Models.Location">
