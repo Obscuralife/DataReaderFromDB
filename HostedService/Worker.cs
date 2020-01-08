@@ -66,8 +66,7 @@ namespace HostedService
         private void DoBackgroundWork()
         {
             dataService.Build(dataPath);
-            //timer = new Timer(async (i) => await dataService.PushEntityToSqlBaseAsync(), null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
-            timer = new Timer(async (i) => await dataService.PushEntityToSqlBaseAsync(), null, TimeSpan.Zero, TimeSpan.FromSeconds(20));
+            timer = new Timer(async (i) => await dataService.PushEntityToSqlBaseAsync(), null, TimeSpan.Zero, TimeSpan.FromMinutes(10));
             logger.LogInformation("Background service is working");
         }
 

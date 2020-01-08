@@ -55,6 +55,7 @@ namespace Services.HostService
                 else
                 {
                     logger.LogWarning($"'{location.Name}' is exist");
+                    currentPosition++;
                 }
             }
             else
