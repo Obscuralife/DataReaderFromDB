@@ -26,7 +26,7 @@
         </member>
         <member name="M:HostedService.Program.Main(System.String[])">
             <summary>
-            /// Represents a main entry point to host service.
+            Represents a main entry point to host service.
             </summary>
             <param name="args">.</param>
         </member>
@@ -40,12 +40,13 @@
         <member name="T:HostedService.Worker">
             <inheritdoc/>
         </member>
-        <member name="M:HostedService.Worker.#ctor(Microsoft.Extensions.Logging.ILogger{HostedService.Worker},Microsoft.Extensions.Options.IOptions{HostedService.AppSettings})">
+        <member name="M:HostedService.Worker.#ctor(Microsoft.Extensions.Logging.ILogger{HostedService.Worker},Microsoft.Extensions.Options.IOptions{HostedService.AppSettings},System.IServiceProvider)">
             <summary>
             Initializes a new instance of the <see cref="T:HostedService.Worker"/> class.
             </summary>
-            <param name="logger">.</param>
-            <param name="settings">..</param>
+            <param name="logger">logger.</param>
+            <param name="settings">settings.</param>
+            <param name="serviceProvider">service provider.</param>
         </member>
         <member name="M:HostedService.Worker.Dispose">
             <inheritdoc/>
@@ -54,9 +55,6 @@
             <inheritdoc/>
         </member>
         <member name="M:HostedService.Worker.StopAsync(System.Threading.CancellationToken)">
-            <inheritdoc/>
-        </member>
-        <member name="M:HostedService.Worker.ExecuteAsync(System.Threading.CancellationToken)">
             <inheritdoc/>
         </member>
     </members>

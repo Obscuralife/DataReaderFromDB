@@ -2,61 +2,80 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Services.HostService;
 
 namespace HostedService
 {
     /// <inheritdoc/>
-    public class Worker : BackgroundService
+    public sealed class Worker : IHostedService, IDisposable
     {
         private readonly ILogger<Worker> logger;
+        private readonly IServiceProvider serviceProvider;
         private readonly string dataPath;
+        private readonly IDataService dataService;
+        private Timer timer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Worker"/> class.
         /// </summary>
-        /// <param name="logger">.</param>
-        /// <param name="settings">..</param>
-        public Worker(ILogger<Worker> logger, IOptions<AppSettings> settings)
+        /// <param name="logger">logger.</param>
+        /// <param name="settings">settings.</param>
+        /// <param name="serviceProvider">service provider.</param>
+        public Worker(ILogger<Worker> logger, IOptions<AppSettings> settings, IServiceProvider serviceProvider)
         {
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             dataPath = settings.Value.PathToLocationsFile;
+            dataService = GetScopeDataService();
         }
 
         /// <inheritdoc/>
-        public override void Dispose()
+        public void Dispose()
         {
-            base.Dispose();
+            logger.LogInformation("Disposing.");
+            timer.Dispose();
         }
 
         /// <inheritdoc/>
-        public override Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             logger.LogInformation("Service Starting");
             if (!File.Exists(dataPath))
             {
                 logger.LogWarning($"Please make sure the input file [{dataPath}] exists, then restart the service.");
-                return Task.CompletedTask;
+                await Task.CompletedTask;
             }
 
-            return base.StartAsync(cancellationToken);
+            DoBackgroundWork();
+
+            await Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public override Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
-            return base.StopAsync(cancellationToken);
+            logger.LogInformation("Hosted Service is stopping.");
+            timer?.Change(Timeout.Infinite, 0);
+            await Task.CompletedTask;
         }
 
-        /// <inheritdoc/>
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        private void DoBackgroundWork()
         {
-            while (!stoppingToken.IsCancellationRequested)
+            dataService.Build(dataPath);
+            //timer = new Timer(async (i) => await dataService.PushEntityToSqlBaseAsync(), null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+            timer = new Timer(async (i) => await dataService.PushEntityToSqlBaseAsync(), null, TimeSpan.Zero, TimeSpan.FromSeconds(20));
+            logger.LogInformation("Background service is working");
+        }
+
+        private IDataService GetScopeDataService()
+        {
+            using (var scope = serviceProvider.CreateScope())
             {
-                logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                await Task.Delay(1000, stoppingToken);
+                return scope.ServiceProvider.GetRequiredService<IDataService>();
             }
         }
     }

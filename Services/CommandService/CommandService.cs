@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using DataAccessLayer;
 using DataAccessLayer.Models;
+using Microsoft.EntityFrameworkCore;
 using CustomConsole = Services.ConsoleService.ConsoleExtension;
 
 namespace Services
@@ -10,9 +12,11 @@ namespace Services
     public sealed class CommandService : ICommandService
     {
         private const int CommandIndex = 0;
+        private const int ArgumentIndex = 1;
         private readonly IHelpService helpService;
-        private readonly Tuple<string, Action<string[]>>[] commands;
-        private readonly Tuple<string, Action<string>>[] getCommands;
+        private readonly Tuple<string, Func<string[], Task<Location[]>>>[] requestToDbCommands;
+        private readonly Tuple<string, Func<string, Task<Location[]>>>[] getRequestAttributes;
+        private readonly Tuple<string, Func<string, Task>>[] secondaryCommands;
         private readonly ApplicationDbContext context;
 
         /// <summary>
@@ -24,193 +28,208 @@ namespace Services
             this.context = context ?? throw new ArgumentNullException(nameof(context));
             helpService = new HelpService();
 
-            commands = new Tuple<string, Action<string[]>>[]
+            requestToDbCommands = new Tuple<string, Func<string[], Task<Location[]>>>[]
             {
-                new Tuple<string, Action<string[]>>("help", PrintHelp),
-                new Tuple<string, Action<string[]>>("exit", Exit),
-                new Tuple<string, Action<string[]>>("get", Get),
+                new Tuple<string, Func<string[], Task<Location[]>>>("get", GetAsync),
             };
 
-            getCommands = new Tuple<string, Action<string>>[]
+            getRequestAttributes = new Tuple<string, Func<string, Task<Location[]>>>[]
                 {
-                    new Tuple<string, Action<string>>("-id", GetById),
-                    new Tuple<string, Action<string>>("-address", GetByAddress),
-                    new Tuple<string, Action<string>>("-city", GetByCity),
+                    new Tuple<string, Func<string, Task<Location[]>>>("-id", GetByIdAsync),
+                    new Tuple<string, Func<string, Task<Location[]>>>("-address", GetByAddressAsync),
+                    new Tuple<string, Func<string, Task<Location[]>>>("-city", GetByCityAsync),
                 };
+
+            secondaryCommands = new Tuple<string, Func<string, Task>>[]
+            {
+                new Tuple<string, Func<string, Task>>("help", PrintHelpAsync),
+                new Tuple<string, Func<string, Task>>("exit", ExitAsync),
+            };
         }
 
         /// <inheritdoc/>
         public bool IsRunning { get; private set; } = true;
 
         /// <inheritdoc/>
-        public void Initialize(string commandLine)
+        public async Task InitializeAsync(string commandString)
         {
-            if (string.IsNullOrEmpty(commandLine))
+            if (string.IsNullOrWhiteSpace(commandString))
             {
-                PrintHelp();
+                await PrintHelpAsync();
             }
 
-            var input = commandLine.Split(' ', 3);
-            var index = Array.FindIndex(
-                commands,
-                i => string.Equals(i.Item1, input[CommandIndex], StringComparison.InvariantCultureIgnoreCase));
+            var splitedComand = commandString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var requestToDbCommandIndex = Array.FindIndex(
+                requestToDbCommands,
+                command => string.Equals(command.Item1, splitedComand[CommandIndex], StringComparison.InvariantCultureIgnoreCase));
 
-            if (index >= 0)
+            if (requestToDbCommandIndex >= 0)
             {
-                var parameteres = input.Length > 1 ? input.Skip(1).ToArray<string>() : null;
-                commands[index].Item2(parameteres);
+                var arguments = splitedComand.Length > 1 ? splitedComand.Skip(ArgumentIndex).ToArray<string>() : null;
+                var locations = await requestToDbCommands[requestToDbCommandIndex].Item2(arguments);
+                CustomConsole.Print(locations);
             }
             else
             {
-                CustomConsole.WriteLineRedColor($"There is no explanation for '{input[CommandIndex]}' command.");
+                var secondaryCommandIndex = Array.FindIndex(
+                secondaryCommands,
+                command => string.Equals(command.Item1, splitedComand[CommandIndex], StringComparison.InvariantCultureIgnoreCase));
+
+                var argument = splitedComand.Length > 1 ? splitedComand[ArgumentIndex] : null;
+                if (secondaryCommandIndex >= 0)
+                {
+                    await secondaryCommands[secondaryCommandIndex].Item2(argument);
+                }
+                else
+                {
+                    CustomConsole.WriteLineRedColor($"There is no explanation for '{splitedComand[CommandIndex]}' command.");
+                }
             }
         }
 
-        private void Get(string[] parameteres)
+        private async Task<Location[]> GetAsync(string[] arguments)
         {
-            if (parameteres == null || string.IsNullOrWhiteSpace(parameteres[0]))
+            if (arguments == null || string.IsNullOrWhiteSpace(arguments[0]))
             {
-                GetAll();
+                return await GetAllAsync();
             }
             else
             {
                 const int GetParameter = 0;
                 const int GetParameterValue = 1;
-                var index = Array.FindIndex(
-                    getCommands,
-                    i => string.Equals(i.Item1, parameteres[GetParameter], StringComparison.InvariantCultureIgnoreCase));
+                var commandIndex = Array.FindIndex(
+                    getRequestAttributes,
+                    command => string.Equals(command.Item1, arguments[GetParameter], StringComparison.InvariantCultureIgnoreCase));
 
-                if (index >= 0)
+                if (commandIndex >= 0)
                 {
-                    var getParameter = parameteres.Length > 1 ? parameteres[GetParameterValue] : null;
-                    getCommands[index].Item2(getParameter);
+                    var getParameter = arguments.Length > 1 ? arguments[GetParameterValue] : null;
+                    var locations = await getRequestAttributes[commandIndex].Item2(getParameter);
+                    return locations;
                 }
                 else
                 {
-                    CustomConsole.WriteLineRedColor($"There is no available '{parameteres[GetParameter]}' command");
+                    CustomConsole.WriteLineRedColor($"There is no available '{arguments[GetParameter]}' command");
                     helpService.PrintHelp("get");
+                    return null;
                 }
             }
         }
 
-        private void GetByCity(string city)
+        private async Task<Location[]> GetByCityAsync(string city)
         {
             if (string.IsNullOrWhiteSpace(city))
             {
-                GetOrderedCities();
+                return await GetOrderedCitiesAsync();
             }
             else
             {
-                var locations = context.Locations
-                                .AsEnumerable()
-                                .Where(i => FindCityExpression(i.Name, city))
-                                .ToArray();
+                city = city.Trim();
+                var locationList = await context.Locations.ToListAsync();
+                var locations = locationList.Where(i => FindCityExpression(i.Name, city));
 
-                if (locations.Length == 0)
+                if (locations.Count() == 0)
                 {
                     CustomConsole.WriteLineRedColor($"There is no location with '{city}' city");
+                    return null;
                 }
-                else
-                {
-                    foreach (var location in locations)
-                    {
-                        CustomConsole.Print(location);
-                    }
-                }
+
+                return locations.ToArray();
             }
         }
 
-        private bool FindCityExpression(string name, string city)
+        private bool FindCityExpression(string currentRoomName, string necessaryRoomName)
         {
-            const int CityIndex = 1;
-            var nameParametres = name.Split(new char[] { ' ' });
+            const int StartCityIndex = 1;
+            string currentCityName = string.Empty;
+            var splitedRoomName = currentRoomName.Split(new char[] { ' ', ',' });
+            var separatorIndex = Array.FindIndex(splitedRoomName, i => i == string.Empty);
 
-            return nameParametres.Length > 1 ?
-                string.Equals(nameParametres[CityIndex], city, StringComparison.InvariantCultureIgnoreCase)
-                : false;
+            if (!HasCityName(splitedRoomName))
+            {
+                return false;
+            }
+
+            var joinCount = HasOfficeName(separatorIndex) ? separatorIndex - StartCityIndex : splitedRoomName.Length - StartCityIndex;
+            currentCityName = string.Join(' ', splitedRoomName, StartCityIndex, joinCount);
+
+            return string.Equals(currentCityName, necessaryRoomName, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        private void GetByAddress(string locationAddress)
+        private bool HasCityName(string[] name)
+        {
+            return name.Length > 1;
+        }
+
+        private bool HasOfficeName(int separatorIndex)
+        {
+            return separatorIndex > 0;
+        }
+
+        private async Task<Location[]> GetByAddressAsync(string locationAddress)
         {
             if (string.IsNullOrWhiteSpace(locationAddress))
             {
-                GetOrderedAddresses();
+                return await GetOrderedAddressesAsync();
             }
             else
             {
-                var locations = context.Locations.Where(i => i.Address == locationAddress).ToArray();
+                var locations = await context.Locations.Where(i => i.Address == locationAddress).ToArrayAsync();
                 if (locations.Length == 0)
                 {
                     CustomConsole.WriteLineRedColor($"There is no location with '{locationAddress}' address");
+                    return null;
                 }
-                else
-                {
-                    CustomConsole.Print(locations[0]);
-                }
+
+                return locations;
             }
         }
 
-        private void GetById(string locationId)
+        private async Task<Location[]> GetByIdAsync(string locationId)
         {
             var success = int.TryParse(locationId, out int id);
             if (!success)
             {
                 CustomConsole.WriteLineRedColor("id - must be a number");
-            }
-
-            var locations = context.Locations.Where(i => i.Id == id).ToArray();
-            if (locations.Length == 0)
-            {
-                CustomConsole.WriteLineRedColor($"There is no location with '{locationId}' Id");
+                return null;
             }
             else
             {
-                CustomConsole.Print(locations[0]);
-            }
-        }
-
-        private void GetAll(string[] args = null)
-        {
-            var locations = context.Locations.OrderBy(i => i.Id).ToArray();
-            if (locations.Length == 0)
-            {
-                CustomConsole.WriteLineRedColor("There is no locations");
-            }
-            else
-            {
-                foreach (var location in locations)
+                var locations = await context.Locations.Where(i => i.Id == id).ToArrayAsync();
+                if (locations.Length == 0)
                 {
-                    CustomConsole.Print(location);
+                    CustomConsole.WriteLineRedColor($"There is no location with '{locationId}' Id");
+                    return null;
                 }
+
+                return locations;
             }
         }
 
-        private void Exit(string[] args = null)
+        private async Task<Location[]> GetAllAsync(string[] args = null)
         {
-            context.Dispose();
+            return await context.Locations.OrderBy(i => i.Id).ToArrayAsync();
+        }
+
+        private async Task ExitAsync(string args = null)
+        {
+            await context.DisposeAsync();
             IsRunning = false;
             CustomConsole.WriteLineGreenColor("Good bye");
+            await Task.CompletedTask;
         }
 
-        private void GetOrderedCities()
+        private async Task<Location[]> GetOrderedCitiesAsync()
         {
-            var locations = context.Locations.OrderBy(i => i.Name).ToArray();
-            foreach (var location in locations)
-            {
-                CustomConsole.Print(location);
-            }
+            return await context.Locations.OrderBy(i => i.Name).ToArrayAsync();
         }
 
-        private void GetOrderedAddresses()
+        private async Task<Location[]> GetOrderedAddressesAsync()
         {
-            var locations = context.Locations.OrderBy(i => i.Address).ToArray();
-            foreach (var location in locations)
-            {
-                CustomConsole.Print(location);
-            }
+            return await context.Locations.OrderBy(i => i.Address).ToArrayAsync();
         }
 
-        private void PrintHelp(string[] command = null)
+        private async Task PrintHelpAsync(string command = null)
         {
             if (command == null)
             {
@@ -218,8 +237,10 @@ namespace Services
             }
             else
             {
-                helpService.PrintHelp(command[0]);
+                helpService.PrintHelp(command);
             }
+
+            await Task.CompletedTask;
         }
     }
 }

@@ -11,10 +11,11 @@ namespace Services.ConsoleService
         /// <summary>
         /// Prints special symbol.
         /// </summary>
-        public static void Symbol()
+        /// <param name="symbol">your custom symbol.</param>
+        public static void Symbol(string symbol = ">>> ")
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write(">>> ");
+            Console.Write(symbol);
             Console.ResetColor();
         }
 
@@ -68,12 +69,25 @@ namespace Services.ConsoleService
         /// <param name="location">.</param>
         public static void Print(Location location)
         {
-            WriteYellowColor("ID:     \t");
+            WriteYellowColor("  ID:     \t");
             WriteLineGreenColor($"{location.Id}");
-            WriteYellowColor("Name:   \t");
+            WriteYellowColor("  Name:   \t");
             WriteLineGreenColor($"{location.Name}");
-            WriteYellowColor("Address:\t");
+            WriteYellowColor("  Address:\t");
             WriteLineGreenColor($"{location.Address}");
+            Console.WriteLine();
+        }
+
+        /// <summary>
+        /// Prints each property of <see cref="Location"/>.
+        /// </summary>
+        /// <param name="locations">collection of location.</param>
+        public static void Print(Location[] locations)
+        {
+            foreach (var location in locations)
+            {
+                Print(location);
+            }
         }
     }
 }

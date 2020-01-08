@@ -16,7 +16,7 @@
         <member name="P:Services.CommandService.IsRunning">
             <inheritdoc/>
         </member>
-        <member name="M:Services.CommandService.Initialize(System.String)">
+        <member name="M:Services.CommandService.InitializeAsync(System.String)">
             <inheritdoc/>
         </member>
         <member name="T:Services.ICommandService">
@@ -29,21 +29,23 @@
             Gets a value indicating whether application is running.
             </summary>
         </member>
-        <member name="M:Services.ICommandService.Initialize(System.String)">
+        <member name="M:Services.ICommandService.InitializeAsync(System.String)">
             <summary>
             Processes input.
             </summary>
-            <param name="commandLine">.</param>
+            <param name="commandLine">execution command line.</param>
+            <returns>.</returns>
         </member>
         <member name="T:Services.ConsoleService.ConsoleExtension">
             <summary>
             Represents custom color IO.
             </summary>
         </member>
-        <member name="M:Services.ConsoleService.ConsoleExtension.Symbol">
+        <member name="M:Services.ConsoleService.ConsoleExtension.Symbol(System.String)">
             <summary>
             Prints special symbol.
             </summary>
+            <param name="symbol">your custom symbol.</param>
         </member>
         <member name="M:Services.ConsoleService.ConsoleExtension.WriteLineGreenColor(System.String)">
             <summary>
@@ -74,6 +76,12 @@
             Prints each property of <see cref="T:DataAccessLayer.Models.Location"/>.
             </summary>
             <param name="location">.</param>
+        </member>
+        <member name="M:Services.ConsoleService.ConsoleExtension.Print(DataAccessLayer.Models.Location[])">
+            <summary>
+            Prints each property of <see cref="T:DataAccessLayer.Models.Location"/>.
+            </summary>
+            <param name="locations">collection of location.</param>
         </member>
         <member name="T:Services.HelpService">
             <inheritdoc/>
@@ -112,6 +120,49 @@
             Prints help message for command.
             </summary>
             <param name="command">command that needs explanation.</param>
+        </member>
+        <member name="T:Services.HostService.DataService">
+            <summary>
+            Represents a data service.
+            </summary>
+        </member>
+        <member name="M:Services.HostService.DataService.#ctor(Microsoft.Extensions.Logging.ILogger{Services.HostService.DataService})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Services.HostService.DataService"/> class.
+            </summary>
+            <param name="logger"><see cref="T:Microsoft.Extensions.Logging.ILogger"/> instance of logging.</param>
+        </member>
+        <member name="M:Services.HostService.DataService.MoveNext">
+            <inheritdoc/>
+        </member>
+        <member name="M:Services.HostService.DataService.PushEntityToSqlBaseAsync">
+            <inheritdoc/>
+        </member>
+        <member name="M:Services.HostService.DataService.Build(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Services.HostService.IDataService">
+            <summary>
+            Data service interface.
+            </summary>
+        </member>
+        <member name="M:Services.HostService.IDataService.MoveNext">
+            <summary>
+            Indicating whether advances the enumerator to the next element of the collection.
+            </summary>
+            <returns>.</returns>
+        </member>
+        <member name="M:Services.HostService.IDataService.Build(System.String)">
+            <summary>
+            Fill collection of deseriazed entities.
+            </summary>
+            <param name="dataPath">path to serialized entities.</param>
+        </member>
+        <member name="M:Services.HostService.IDataService.PushEntityToSqlBaseAsync">
+            <summary>
+            Push local entities to sql data base.
+            </summary>
+            <returns><see cref="T:System.Threading.Tasks.Task"/>.</returns>
         </member>
     </members>
 </doc>
