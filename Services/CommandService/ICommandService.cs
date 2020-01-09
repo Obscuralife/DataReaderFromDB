@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using DataAccessLayer.Models;
 
 namespace Services
 {
@@ -16,7 +17,7 @@ namespace Services
         /// Processes input.
         /// </summary>
         /// <param name="commandLine">execution command line.</param>
-        /// <returns>.</returns>
-        Task InitializeAsync(string commandLine);
+        /// <returns>Collection of 'location' entities.</returns>
+        Task<Location[]> ParseComandLine(string commandLine);
     }
 }

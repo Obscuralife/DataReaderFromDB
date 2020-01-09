@@ -16,7 +16,7 @@
         <member name="P:Services.CommandService.IsRunning">
             <inheritdoc/>
         </member>
-        <member name="M:Services.CommandService.InitializeAsync(System.String)">
+        <member name="M:Services.CommandService.ParseComandLine(System.String)">
             <inheritdoc/>
         </member>
         <member name="T:Services.ICommandService">
@@ -29,12 +29,12 @@
             Gets a value indicating whether application is running.
             </summary>
         </member>
-        <member name="M:Services.ICommandService.InitializeAsync(System.String)">
+        <member name="M:Services.ICommandService.ParseComandLine(System.String)">
             <summary>
             Processes input.
             </summary>
             <param name="commandLine">execution command line.</param>
-            <returns>.</returns>
+            <returns>Collection of 'location' entities.</returns>
         </member>
         <member name="T:Services.ConsoleService.ConsoleExtension">
             <summary>

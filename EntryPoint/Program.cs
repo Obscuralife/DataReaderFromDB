@@ -22,7 +22,7 @@ namespace EntryPoint
             Console.WriteLine("Enter the 'help' to get a help");
             if (args.Length > 0)
             {
-                 await InvokeFromCommandWindowAsync(args);
+                await InvokeFromCommandWindowAsync(args);
             }
             else
             {
@@ -36,7 +36,8 @@ namespace EntryPoint
             {
                 Console.WriteLine();
                 CustomConsole.Symbol();
-                await commandHandler.InitializeAsync(commandLine: Console.ReadLine());
+                var locations = await commandHandler.ParseComandLine(commandLine: Console.ReadLine());
+                CustomConsole.Print(locations);
             }
             while (commandHandler.IsRunning);
         }
@@ -46,7 +47,8 @@ namespace EntryPoint
             Console.WriteLine();
             CustomConsole.Symbol();
             var commandLine = string.Join(' ', args);
-            await commandHandler.InitializeAsync(commandLine);
+            var locations = await commandHandler.ParseComandLine(commandLine);
+            CustomConsole.Print(locations);
 
             if (commandHandler.IsRunning)
             {

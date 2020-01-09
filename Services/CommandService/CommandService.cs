@@ -51,11 +51,12 @@ namespace Services
         public bool IsRunning { get; private set; } = true;
 
         /// <inheritdoc/>
-        public async Task InitializeAsync(string commandString)
+        public async Task<Location[]> ParseComandLine(string commandString)
         {
             if (string.IsNullOrWhiteSpace(commandString))
             {
                 await PrintHelpAsync();
+                return Array.Empty<Location>();
             }
 
             var splitedComand = commandString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -66,8 +67,7 @@ namespace Services
             if (requestToDbCommandIndex >= 0)
             {
                 var arguments = splitedComand.Length > 1 ? splitedComand.Skip(ArgumentIndex).ToArray<string>() : null;
-                var locations = await requestToDbCommands[requestToDbCommandIndex].Item2(arguments);
-                CustomConsole.Print(locations);
+                return await requestToDbCommands[requestToDbCommandIndex].Item2(arguments);
             }
             else
             {
@@ -85,6 +85,8 @@ namespace Services
                     CustomConsole.WriteLineRedColor($"There is no explanation for '{splitedComand[CommandIndex]}' command.");
                 }
             }
+
+            return Array.Empty<Location>();
         }
 
         private async Task<Location[]> GetAsync(string[] arguments)
@@ -111,7 +113,7 @@ namespace Services
                 {
                     CustomConsole.WriteLineRedColor($"There is no available '{arguments[GetParameter]}' command");
                     helpService.PrintHelp("get");
-                    return null;
+                    return Array.Empty<Location>();
                 }
             }
         }
@@ -131,7 +133,7 @@ namespace Services
                 if (locations.Count() == 0)
                 {
                     CustomConsole.WriteLineRedColor($"There is no location with '{city}' city");
-                    return null;
+                    return Array.Empty<Location>();
                 }
 
                 return locations.ToArray();
@@ -178,7 +180,7 @@ namespace Services
                 if (locations.Length == 0)
                 {
                     CustomConsole.WriteLineRedColor($"There is no location with '{locationAddress}' address");
-                    return null;
+                    return Array.Empty<Location>();
                 }
 
                 return locations;
@@ -199,7 +201,7 @@ namespace Services
                 if (locations.Length == 0)
                 {
                     CustomConsole.WriteLineRedColor($"There is no location with '{locationId}' Id");
-                    return null;
+                    return Array.Empty<Location>();
                 }
 
                 return locations;
